@@ -4,12 +4,14 @@ from db.base import Base, engine
 from fastapi import FastAPI
 from api.v1.endpoints.users import router as auth_router
 from api.v1.endpoints.books import router as book_router
+from api.v1.endpoints.authors import router as author_router
 import uvicorn
 
 app = FastAPI()
 
 app.include_router(auth_router)
 app.include_router(book_router)
+app.include_router(author_router)
 
 @app.post("/setup_database")
 async def setup_database():

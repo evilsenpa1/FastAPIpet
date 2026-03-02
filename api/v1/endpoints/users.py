@@ -8,13 +8,13 @@ from repository.auth import UserRepository
 router = APIRouter(prefix="/auth")
 
 
-@router.get("/protected", dependencies=[Depends(security.access_token_required)])
-def protected():
+@router.get("/protected", dependencies=[Depends(security.access_token_required)], tags=["Users"])
+def protected_route():
     return {"data": "Supersecret"}
 
 
-@router.post("/register")
-async def register(
+@router.post("/register",  tags=["Users"])
+async def register_route(
     data: RegisterRequest,
     service: AuthService = Depends(get_auth_service),
 ):
@@ -22,8 +22,8 @@ async def register(
     return {"user_id": user.id}
 
 
-@router.post("/login")
-async def login(
+@router.post("/login", tags=["Users"])
+async def login_route(
     data: LoginRequest,
     response: Response,
     service: AuthService = Depends(get_auth_service),
@@ -34,6 +34,6 @@ async def login(
     return {"message": "Logged in"}
 
 
-@router.get("/all_users", dependencies=[Depends(security.access_token_required)])
-async def all_users( service: AuthService = Depends(get_auth_service)):
+@router.get("/all_users", dependencies=[Depends(security.access_token_required)], tags=["Users"])
+async def all_users_route( service: AuthService = Depends(get_auth_service)):
     return await service.all_users()
