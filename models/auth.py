@@ -8,7 +8,7 @@ class UserRole(str, Enum):
     MODERATOR = "moderator"
     ADMIN = "admin"
 
-class User(Base):
+class UserModel(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

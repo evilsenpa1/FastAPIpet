@@ -1,7 +1,7 @@
 # auth/service.py
 import bcrypt
 from fastapi import HTTPException, status
-from models.auth import User
+from models.auth import UserModel
 from repository.auth import UserRepository
 
 
@@ -23,7 +23,7 @@ class AuthService:
         email: str,
         username: str,
         password: str,
-    ) -> User:
+    ) -> UserModel:
         existing = await self.repo.get_by_email(email)
         if existing:
             raise HTTPException(
@@ -36,7 +36,7 @@ class AuthService:
             hashed_password=hash_password(password),
         )
 
-    async def authenticate_user(self, email: str, password: str) -> User:
+    async def authenticate_user(self, email: str, password: str) -> UserModel:
         user = await self.repo.get_by_email(email)
         if not user or not verify_password(password, user.hashed_password):
             raise HTTPException(
@@ -50,8 +50,12 @@ class AuthService:
             )
         return user
 
-    async def get_user_by_id(self, user_id: int) -> User:
+    async def get_user_by_id(self, user_id: int) -> UserModel:
         user = await self.repo.get_by_id(user_id)
         if not user:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
         return user
+    
+    async def all_users(self) -> UserModel:
+        query = await self.repo.get_all_users()
+        return query

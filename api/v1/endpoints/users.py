@@ -3,6 +3,7 @@ from schemas.auth import RegisterRequest, LoginRequest
 from services.auth_service import AuthService
 from dependencies.auth import get_auth_service
 from core.auth_security import security
+from repository.auth import UserRepository
 
 router = APIRouter(prefix="/auth")
 
@@ -31,3 +32,8 @@ async def login(
     token = security.create_access_token(uid=str(user.id))
     security.set_access_cookies(token, response)
     return {"message": "Logged in"}
+
+
+@router.get("/all_users", dependencies=[Depends(security.access_token_required)])
+async def all_users( service: AuthService = Depends(get_auth_service)):
+    return await service.all_users()
