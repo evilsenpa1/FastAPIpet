@@ -8,6 +8,7 @@ class BookAddSchema(BaseModel):
     year: int = Field()
     month: int = Field()
     day: int = Field()
+    file_path: str
 
 
     @field_validator("name")

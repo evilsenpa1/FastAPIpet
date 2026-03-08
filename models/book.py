@@ -28,6 +28,7 @@ class BookModel(Base):
     year: Mapped[int] = mapped_column()
     month: Mapped[int] = mapped_column()
     day: Mapped[int] = mapped_column()
+    file_path: Mapped[str] = mapped_column(nullable=True)
 
 
 class AuthorModel(Base):
