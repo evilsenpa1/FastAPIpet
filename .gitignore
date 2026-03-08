@@ -134,3 +134,6 @@ dump.rdb
 *.bak
 *.swp
 *~
+
+
+.pylintrc
