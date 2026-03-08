@@ -13,3 +13,6 @@ def get_auth_service(
     repo: UserRepository = Depends(get_user_repo),
 ) -> AuthService:
     return AuthService(repo)
+
+def get_current_user_id(payload=Depends(security.access_token_required)) -> int:
+    return int(payload.sub)

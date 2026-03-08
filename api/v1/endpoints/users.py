@@ -3,7 +3,6 @@ from schemas.auth import RegisterRequest, LoginRequest
 from services.auth_service import AuthService
 from dependencies.auth import get_auth_service
 from core.auth_security import security
-from repository.auth import UserRepository
 
 router = APIRouter(prefix="/auth")
 

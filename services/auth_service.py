@@ -3,6 +3,8 @@ import bcrypt
 from fastapi import HTTPException, status
 from models.auth import UserModel
 from repository.auth import UserRepository
+from core import auth_security
+from jose import JWTError, jwt
 
 
 def hash_password(password: str) -> str:
@@ -55,7 +57,28 @@ class AuthService:
         if not user:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
         return user
-    
+
     async def all_users(self) -> UserModel:
         query = await self.repo.get_all_users()
         return query
+
+    @staticmethod
+    def get_user_id_from_token(token: str) -> int:
+        try:
+            payload = jwt.decode(
+                token,
+                auth_security.config.JWT_SECRET_KEY,
+                algorithms=[auth_security.config.JWT_ALGORITHM],
+            )
+            user_id: str = payload.get("sub")
+            if user_id is None:
+                raise HTTPException(
+                    status.HTTP_401_UNAUTHORIZED,
+                    "Token missing subject",
+                )
+            return int(user_id)
+        except JWTError:
+            raise HTTPException(
+                status.HTTP_401_UNAUTHORIZED,
+                "Could not validate token",
+            )
