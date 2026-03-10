@@ -1,18 +1,18 @@
 from fastapi import APIRouter, Response, Depends
-from schemas.auth import RegisterRequest, LoginRequest
+from schemas.auth_schema import RegisterRequest, LoginRequest, UserResponse
 from services.auth_service import AuthService
-from dependencies.auth import get_auth_service
+from dependencies.auth import get_auth_service, get_current_user_id
 from core.auth_security import security
 
-router = APIRouter(prefix="/auth")
+router = APIRouter()
 
 
-@router.get("/protected", dependencies=[Depends(security.access_token_required)], tags=["Users"])
+@router.get("/protected", dependencies=[Depends(security.access_token_required)])
 def protected_route():
     return {"data": "Supersecret"}
 
 
-@router.post("/register",  tags=["Users"])
+@router.post("/register")
 async def register_route(
     data: RegisterRequest,
     service: AuthService = Depends(get_auth_service),
@@ -21,7 +21,7 @@ async def register_route(
     return {"user_id": user.id}
 
 
-@router.post("/login", tags=["Users"])
+@router.post("/login")
 async def login_route(
     data: LoginRequest,
     response: Response,
@@ -33,6 +33,3 @@ async def login_route(
     return {"message": "Logged in"}
 
 
-@router.get("/all_users", dependencies=[Depends(security.access_token_required)], tags=["Users"])
-async def all_users_route( service: AuthService = Depends(get_auth_service)):
-    return await service.all_users()

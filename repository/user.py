@@ -1,6 +1,8 @@
+from fastapi import HTTPException
 from sqlalchemy import select
 from db.session import SessionDep
 from models.auth import UserModel
+from schemas.user_schema import UserPatchSchema
 
 
 class UserRepository:
@@ -31,3 +33,20 @@ class UserRepository:
         await self.db.commit()
         await self.db.refresh(user)
         return user
+    
+    async def patch(self, user_id: int, patch: UserPatchSchema):
+        result = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        existing = result.scalar_one_or_none()
+
+        if existing is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        update_data = patch.model_dump(exclude_unset=True)
+
+        for field, value in update_data.items():
+            setattr(existing, field, value)
+
+        await self.db.commit()
+        await self.db.refresh(existing)
+
+        return existing
