@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from db.session import SessionDep
 from models.book import BookModel, AuthorModel
-from schemas.book import BookAddSchema
+from schemas.book_schema import BookAddSchema
 from fastapi import HTTPException, Depends
 from db.session import get_session, SessionDep
 
@@ -37,3 +37,7 @@ class BookRepository:
         self.db.add(new_book)
         await self.db.commit()
         return {"status": "success"}
+    
+    async def get_book_by_id(self, book_id: int) -> BookModel | None:
+        result = await self.db.execute(select(BookModel).where(BookModel.id == book_id))
+        return result.scalar_one_or_none()
