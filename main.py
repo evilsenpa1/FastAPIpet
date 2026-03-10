@@ -1,17 +1,14 @@
-
-
+from authx.exceptions import MissingTokenError
 from db.base import Base, engine
-from fastapi import FastAPI
-from api.v1.endpoints.users import router as auth_router
-from api.v1.endpoints.books import router as book_router
-from api.v1.endpoints.authors import router as author_router
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from api.v1.v1_router import v1_router
 import uvicorn
 
 app = FastAPI()
 
-app.include_router(auth_router)
-app.include_router(book_router)
-app.include_router(author_router)
+app.include_router(v1_router)
+
 
 @app.post("/setup_database")
 async def setup_database():
@@ -22,10 +19,9 @@ async def setup_database():
     return {"status": "success"}
 
 
-
-
-
-
+@app.exception_handler(MissingTokenError)
+async def missing_token_handler(request: Request, exc: MissingTokenError):
+    return JSONResponse(status_code=401, content={"detail": "Not authenticated"})
 
 
 if __name__ == "__main__":
