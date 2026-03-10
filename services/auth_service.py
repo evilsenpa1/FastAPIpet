@@ -1,8 +1,8 @@
 # auth/service.py
 import bcrypt
 from fastapi import HTTPException, status
-from models.auth import UserModel
-from repository.auth import UserRepository
+from models.auth_model import UserModel
+from repository.user_repo import UserRepository
 from core import auth_security
 from jose import JWTError, jwt
 

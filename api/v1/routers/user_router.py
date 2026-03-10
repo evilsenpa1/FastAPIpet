@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from services.user_service import UserService
-from dependencies.auth import get_user_service
+from dependencies.auth_dep import get_user_service
 from schemas.user_schema import UserPatchSchema
 from core.auth_security import security
-from dependencies.auth import get_current_user_id
+from dependencies.auth_dep import get_current_user_id
 
 router = APIRouter()
 

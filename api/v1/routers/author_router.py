@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from schemas.book_schema import AuthorAddSchema, AuthorDeleteSchema
 from db.session import SessionDep
 from services import book_service
-from repository.author import AuthorRepository
+from repository.author_repo import AuthorRepository
 
 router = APIRouter()
 

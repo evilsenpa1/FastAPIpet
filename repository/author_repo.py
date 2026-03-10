@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from db.session import SessionDep
-from models.book import AuthorModel
+from models.book_model import AuthorModel
 from db.session import SessionDep
 
 

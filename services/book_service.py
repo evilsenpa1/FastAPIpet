@@ -1,4 +1,4 @@
-from schemas.book import (
+from schemas.book_schema import (
     BookAddSchema,
     AuthorAddSchema,
     BookDeleteSchema,
@@ -7,8 +7,8 @@ from schemas.book import (
     AuthorDeleteSchema,
 )
 from db.session import SessionDep
-from models.book import BookModel, AuthorModel
-from repository.book import BookRepository
+from models.book_model import BookModel, AuthorModel
+from repository.book_repo import BookRepository
 from sqlalchemy import select
 from fastapi import HTTPException, File, UploadFile, Depends
 import aiofiles

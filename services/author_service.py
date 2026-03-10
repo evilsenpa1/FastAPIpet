@@ -1,5 +1,5 @@
-from models.book import BookModel
-from repository.author import AuthorRepository
+from models.book_model import BookModel
+from repository.author_repo import AuthorRepository
 
 
 class AuthorService:

@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from db.session import SessionDep
-from models.book import BookModel, AuthorModel
+from models.book_model import BookModel, AuthorModel
 from schemas.book_schema import BookAddSchema
 from fastapi import HTTPException, Depends
 from db.session import get_session, SessionDep

@@ -1,7 +1,7 @@
 # auth/dependencies.py
 from fastapi import Depends
 from db.session import SessionDep 
-from repository.user import UserRepository
+from repository.user_repo import UserRepository
 from services.auth_service import AuthService
 from services.user_service import UserService
 from schemas.user_schema import UserPatchSchema

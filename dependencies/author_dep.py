@@ -1,6 +1,6 @@
 from fastapi import Depends
 from db.session import SessionDep
-from repository.author import AuthorRepository
+from repository.author_repo import AuthorRepository
 from services.auth_service import AuthService
 from core.auth_security import security
 

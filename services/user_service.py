@@ -1,7 +1,7 @@
 # auth/service.py
 from fastapi import HTTPException, status
-from models.auth import UserModel
-from repository.user import UserRepository
+from models.auth_model import UserModel
+from repository.user_repo import UserRepository
 from schemas.user_schema import UserPatchSchema
 
 

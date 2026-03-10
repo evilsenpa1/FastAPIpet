@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Form
-from schemas.book import BookAddSchema
+from schemas.book_schema import BookAddSchema
 import json
 
 
