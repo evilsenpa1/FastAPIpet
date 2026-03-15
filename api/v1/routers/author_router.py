@@ -1,34 +1,50 @@
-from fastapi import APIRouter, Depends
-from schemas.book_schema import AuthorAddSchema, AuthorDeleteSchema
+from fastapi import APIRouter, Depends, HTTPException
+from schemas.author_schema import AuthorAddSchema, AuthorSchema, AuthorPatchSchema
 from db.session import SessionDep
 from services import book_service
+from services.author_service import AuthorService
 from repository.author_repo import AuthorRepository
+from dependencies.author_dep import get_author_service
+from core.auth_security import security
+from dependencies.auth_dep import require_staff
 
 router = APIRouter()
 
 
-@router.get("/get_authors")
-async def get_author_route(session: SessionDep):
-    return await book_service.get_authors(session)
+@router.get("/get_all_authors")
+async def all_authors_route(service: AuthorService = Depends(get_author_service)):
+    return await service.get_all_authors()
 
 
 @router.get("/author_by_id/{author_id}")
 async def author_by_id_route(
-    author_id: int, repo: AuthorRepository = Depends(AuthorRepository)
+    author_id: int, service: AuthorService = Depends(get_author_service)
 ):
-    return await repo.get_author_by_id(author_id)
+    author = await service.get_author_by_id(author_id)
+    if not author:
+        return HTTPException(status_code=404, detail="Author not found")
+    
+    return author
 
 
-@router.post("/add_authors")
-async def add_author_route(data: AuthorAddSchema, session: SessionDep):
-    return await book_service.add_author(data, session)
+@router.post("/add_author", dependencies=[Depends(security.access_token_required), Depends(require_staff)])
+async def add_author_route(
+    data: AuthorAddSchema, service: AuthorService = Depends(get_author_service)
+):
+    return await service.create_author(data)
 
 
-@router.post("/update_authors")
-async def update_author_route(data: AuthorAddSchema, session: SessionDep):
-    return await book_service.update_author(data, session)
+@router.patch("/update_author/{author_id}", dependencies=[Depends(security.access_token_required), Depends(require_staff)])
+async def patch_author_route(
+    author_id: int,
+    data: AuthorPatchSchema,
+    service: AuthorService = Depends(get_author_service),
+):
+    return await service.patch_author(author_id, data)
 
 
-@router.delete("/delete_authors")
-async def delete_author_route(data: AuthorDeleteSchema, session: SessionDep):
-    return await book_service.delete_author(data, session)
+@router.delete("/delete_author/{author_id}", dependencies=[Depends(security.access_token_required), Depends(require_staff)])
+async def delete_author_route(
+    author_id: int, service: AuthorService = Depends(get_author_service)
+):
+    return await service.delete_author(author_id)
