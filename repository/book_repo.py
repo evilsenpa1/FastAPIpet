@@ -1,43 +1,24 @@
 from sqlalchemy import select
 from db.session import SessionDep
 from models.book_model import BookModel, AuthorModel
-from schemas.book_schema import BookAddSchema
+from schemas.book_schema import BookAddSchema, BookPatchSchema
 from fastapi import HTTPException, Depends
 from db.session import get_session, SessionDep
+from utils.crud import CrudBase
+from repository.author_repo import AuthorRepository
 
 
-class BookRepository:
+class BookRepository(CrudBase[BookModel]):
     def __init__(self, db: SessionDep):
-        self.db = db
+        super().__init__(model=BookModel, db=db)
 
-    async def create_book(self, file_path, data: BookAddSchema) -> BookModel | None:
-        author_objects = []
-        for author_name in data.authors:
-            result = await self.db.execute(select(AuthorModel).filter(AuthorModel.author == author_name))
+    async def create(self, book_data, authors_ids, author_repo):
+        new_book = await super().create(book_data)
 
-            author = result.scalars().first()
 
-            if author is None:
-                raise HTTPException(status_code=404, detail=f"Author '{author_name}' not found")
-
-            author_objects.append(author)
-
-        if not author_objects:
-            raise HTTPException(status_code=400, detail="List of authors is empty. Need to add at least 1 author")
-        
-        new_book= BookModel(
-        name = data.name,
-        authors = author_objects,
-        description = data.description,
-        year = data.year,
-        month = data.month,
-        day = data.day,
-        file_path = str(file_path)
-        )
-        self.db.add(new_book)
+        authors = await author_repo.get_list_by_ids(authors_ids)
+        new_book.authors = authors
         await self.db.commit()
-        return {"status": "success"}
-    
-    async def get_book_by_id(self, book_id: int) -> BookModel | None:
-        result = await self.db.execute(select(BookModel).where(BookModel.id == book_id))
-        return result.scalar_one_or_none()
+        await self.db.refresh(new_book)
+
+        return new_book
