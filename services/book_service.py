@@ -62,6 +62,14 @@ class BookService:
         return await self.repo.patch(id, data)
 
     async def delete_book(self, id: int):
+        book = await self.repo.get_by_id(id)
+        if not book:
+            raise HTTPException(status_code=404, detail=f"Book {id} not found")
+        
+
+        if book.file_path:
+            file_manager.delete_file(book.file_path)
+
         return await self.repo.delete(id)
 
     async def _validate_authors(

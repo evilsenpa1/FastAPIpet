@@ -3,11 +3,10 @@ from fastapi import HTTPException
 import aiofiles
 
 def delete_file(path: str):
-    if os.path.exists(path):
+    try:
         os.remove(path)
-    else:
-        raise HTTPException(status_code=404, detail="File not found")
-
+    except FileNotFoundError:
+        pass
 
 async def create_file(path, file):
     async with aiofiles.open(path, "wb") as buffer:
