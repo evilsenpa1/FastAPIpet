@@ -5,6 +5,7 @@ from models.auth_model import UserModel
 from repository.user_repo import UserRepository
 from core import auth_security
 from jose import JWTError, jwt
+from models.auth_model import UserModel, UserRole
 
 
 def hash_password(password: str) -> str:
@@ -62,23 +63,14 @@ class AuthService:
         query = await self.repo.get_all_users()
         return query
 
-    @staticmethod
-    def get_user_id_from_token(token: str) -> int:
-        try:
-            payload = jwt.decode(
-                token,
-                auth_security.config.JWT_SECRET_KEY,
-                algorithms=[auth_security.config.JWT_ALGORITHM],
-            )
-            user_id: str = payload.get("sub")
-            if user_id is None:
-                raise HTTPException(
-                    status.HTTP_401_UNAUTHORIZED,
-                    "Token missing subject",
-                )
-            return int(user_id)
-        except JWTError:
+    async def is_staff(self, user_id: int) -> bool:
+        ALLOWED_ROLES = [UserRole.MODERATOR, UserRole.ADMIN]
+
+        user = await self.get_user_by_id(user_id)
+
+        if user.role not in ALLOWED_ROLES:
             raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED,
-                "Could not validate token",
+                status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
             )
+
+        return True
