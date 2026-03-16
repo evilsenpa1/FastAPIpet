@@ -26,3 +26,9 @@ def get_user_service(
 
 def get_current_user_id(payload=Depends(security.access_token_required)) -> int:
     return int(payload.sub)
+
+async def require_staff(
+    user_id: int = Depends(get_current_user_id),
+    auth_service: AuthService = Depends(get_auth_service),
+) -> None:
+    await auth_service.is_staff(user_id)

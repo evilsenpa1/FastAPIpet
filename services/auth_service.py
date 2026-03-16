@@ -5,6 +5,8 @@ from models.auth_model import UserModel
 from repository.user_repo import UserRepository
 from core import auth_security
 from jose import JWTError, jwt
+from models.auth_model import UserModel, UserRole
+from schemas.auth_schema import RegisterRequest
 
 
 def hash_password(password: str) -> str:
@@ -20,23 +22,16 @@ class AuthService:
     def __init__(self, repo: UserRepository):
         self.repo = repo
 
-    async def create_user(
-        self,
-        email: str,
-        username: str,
-        password: str,
-    ) -> UserModel:
-        existing = await self.repo.get_by_email(email)
+    async def create_user(self, data: RegisterRequest) -> UserModel:
+        existing = await self.repo.get_by_email(data.email)
         if existing:
             raise HTTPException(
                 status.HTTP_409_CONFLICT,
                 "Email already registered",
             )
-        return await self.repo.create(
-            email=email,
-            username=username,
-            hashed_password=hash_password(password),
-        )
+        user_data = data.model_dump()
+        user_data["hashed_password"] = hash_password(user_data.pop("password"))
+        return await self.repo.create(user_data)
 
     async def authenticate_user(self, email: str, password: str) -> UserModel:
         user = await self.repo.get_by_email(email)
@@ -62,23 +57,14 @@ class AuthService:
         query = await self.repo.get_all_users()
         return query
 
-    @staticmethod
-    def get_user_id_from_token(token: str) -> int:
-        try:
-            payload = jwt.decode(
-                token,
-                auth_security.config.JWT_SECRET_KEY,
-                algorithms=[auth_security.config.JWT_ALGORITHM],
-            )
-            user_id: str = payload.get("sub")
-            if user_id is None:
-                raise HTTPException(
-                    status.HTTP_401_UNAUTHORIZED,
-                    "Token missing subject",
-                )
-            return int(user_id)
-        except JWTError:
+    async def is_staff(self, user_id: int) -> bool:
+        ALLOWED_ROLES = [UserRole.MODERATOR, UserRole.ADMIN]
+
+        user = await self.get_user_by_id(user_id)
+
+        if user.role not in ALLOWED_ROLES:
             raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED,
-                "Could not validate token",
+                status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
             )
+
+        return True

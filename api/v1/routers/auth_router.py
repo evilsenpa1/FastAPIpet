@@ -17,7 +17,7 @@ async def register_route(
     data: RegisterRequest,
     service: AuthService = Depends(get_auth_service),
 ):
-    user = await service.create_user(data.email, data.username, data.password)
+    user = await service.create_user(data)
     return {"user_id": user.id}
 
 
