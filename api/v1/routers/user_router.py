@@ -8,13 +8,17 @@ from dependencies.auth_dep import get_current_user_id
 router = APIRouter()
 
 
-@router.get("/all_users", dependencies=[Depends(security.access_token_required), Depends(require_staff)])
+@router.get(
+    "/all_users",
+    dependencies=[Depends(security.access_token_required), Depends(require_staff)],
+)
 async def all_users_route(service: UserService = Depends(get_user_service)):
     return await service.all_users()
 
 
 @router.get(
-    "/user_by_id/{user_id}", dependencies=[Depends(security.access_token_required), Depends(require_staff)]
+    "/user_by_id/{user_id}",
+    dependencies=[Depends(security.access_token_required), Depends(require_staff)],
 )
 async def user_by_id_route(
     user_id: int, service: UserService = Depends(get_user_service)
@@ -23,9 +27,32 @@ async def user_by_id_route(
 
 
 @router.patch("/patch_user/me", dependencies=[Depends(security.access_token_required)])
-async def user_patch_route(
+async def patch_me_route(
     schema: UserPatchSchema,
     user_id: int = Depends(get_current_user_id),
     service: UserService = Depends(get_user_service),
 ):
     return await service.patch_user(schema, user_id)
+
+
+@router.patch(
+    "/patch_user/{user_id}",
+    dependencies=[Depends(security.access_token_required), Depends(require_staff)],
+)
+async def patch_user_route(
+    schema: UserPatchSchema,
+    user_id: int,
+    service: UserService = Depends(get_user_service),
+):
+    return await service.patch_user(schema, user_id)
+
+
+@router.delete(
+    "/delete_user/{user_id}",
+    dependencies=[Depends(security.access_token_required), Depends(require_staff)],
+)
+async def delete_user_route(
+    user_id: int,
+    service: UserService = Depends(get_user_service),
+):
+    return await service.delete_user(user_id)
