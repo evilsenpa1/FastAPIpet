@@ -6,6 +6,7 @@ from repository.user_repo import UserRepository
 from core import auth_security
 from jose import JWTError, jwt
 from models.auth_model import UserModel, UserRole
+from schemas.auth_schema import RegisterRequest
 
 
 def hash_password(password: str) -> str:
@@ -21,23 +22,16 @@ class AuthService:
     def __init__(self, repo: UserRepository):
         self.repo = repo
 
-    async def create_user(
-        self,
-        email: str,
-        username: str,
-        password: str,
-    ) -> UserModel:
-        existing = await self.repo.get_by_email(email)
+    async def create_user(self, data: RegisterRequest) -> UserModel:
+        existing = await self.repo.get_by_email(data.email)
         if existing:
             raise HTTPException(
                 status.HTTP_409_CONFLICT,
                 "Email already registered",
             )
-        return await self.repo.create(
-            email=email,
-            username=username,
-            hashed_password=hash_password(password),
-        )
+        user_data = data.model_dump()
+        user_data["hashed_password"] = hash_password(user_data.pop("password"))
+        return await self.repo.create(user_data)
 
     async def authenticate_user(self, email: str, password: str) -> UserModel:
         user = await self.repo.get_by_email(email)
