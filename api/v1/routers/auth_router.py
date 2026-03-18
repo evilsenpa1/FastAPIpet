@@ -7,9 +7,9 @@ from core.auth_security import security
 router = APIRouter()
 
 
-@router.get("/protected", dependencies=[Depends(security.access_token_required)])
-def protected_route():
-    return {"data": "Supersecret"}
+# @router.get("/protected", dependencies=[Depends(security.access_token_required)])
+# def protected_route():
+#     return {"data": "Supersecret"}
 
 
 @router.post("/register")
@@ -31,5 +31,9 @@ async def login_route(
     token = security.create_access_token(uid=str(user.id))
     security.set_access_cookies(token, response)
     return {"message": "Logged in"}
+
+@router.get("/staff_check")
+async def staff_check_route(id: int = Depends(get_current_user_id), service: AuthService = Depends(get_auth_service)):
+    return service.is_staff(id)
 
 
