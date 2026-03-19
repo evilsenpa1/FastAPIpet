@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 
 from core.settings import DATABASE_URL
 
@@ -24,5 +25,10 @@ class Base(DeclarativeBase):
     pass
 
 async def get_session() -> AsyncSession:
+    async with SessionLocal() as session:
+        yield session
+
+@asynccontextmanager
+async def get_session_ctx() -> AsyncSession:
     async with SessionLocal() as session:
         yield session
