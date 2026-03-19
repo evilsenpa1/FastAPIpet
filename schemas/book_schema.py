@@ -14,9 +14,9 @@ class BookAddSchema(BaseModel):
     @field_validator("name")
     @classmethod 
     def not_empty(cls, v):
-        if not v.strip():  # защита и от "   " (пробелы)
+        if not v.strip():
             raise ValueError("Field cannot be empty")
-        return v.strip()   # можно сразу обрезать пробелы
+        return v.strip() 
 
 
 class BookSchema(BookAddSchema):
