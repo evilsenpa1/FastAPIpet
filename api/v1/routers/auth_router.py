@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, Depends
+from fastapi import APIRouter, Response, Depends, Request, HTTPException
 from schemas.auth_schema import RegisterRequest, LoginRequest, UserResponse
 from services.auth_service import AuthService
 from dependencies.auth_dep import get_auth_service, get_current_user_id
@@ -28,9 +28,25 @@ async def login_route(
     service: AuthService = Depends(get_auth_service),
 ):
     user = await service.authenticate_user(data.email, data.password)
-    token = security.create_access_token(uid=str(user.id))
-    security.set_access_cookies(token, response)
+    access_token = security.create_access_token(uid=str(user.id))
+
+    refresh_token = security.create_refresh_token(uid=str(user.id))
+
+    security.set_access_cookies(access_token, response)
+    security.set_refresh_cookies(refresh_token, response)
+
     return {"message": "Logged in"}
+
+
+@router.post("/refresh")
+async def refresh_route(
+    response: Response,
+    payload = Depends(security.refresh_token_required),
+):
+    
+    new_access_token = security.create_access_token(uid=payload.sub)
+    security.set_access_cookies(new_access_token, response)
+    return {"message": "Token refreshed"}
 
 @router.get("/staff_check")
 async def staff_check_route(id: int = Depends(get_current_user_id), service: AuthService = Depends(get_auth_service)):
