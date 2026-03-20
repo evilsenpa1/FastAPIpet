@@ -6,7 +6,7 @@ from authx import AuthX, AuthXConfig
 
 load_dotenv()
 
-PROD = os.getenv("PROD")
+PROD = os.getenv("PROD", "false").lower() == "true"
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
