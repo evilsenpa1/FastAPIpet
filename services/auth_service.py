@@ -58,13 +58,8 @@ class AuthService:
         return query
 
     async def is_staff(self, user_id: int) -> bool:
-        ALLOWED_ROLES = [UserRole.MODERATOR, UserRole.ADMIN]
+        STAFF_ROLES = {UserRole.MODERATOR, UserRole.ADMIN}
 
         user = await self.get_user_by_id(user_id)
 
-        if user.role not in ALLOWED_ROLES:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, detail="Access denied"
-            )
-
-        return True
+        return user.role in STAFF_ROLES

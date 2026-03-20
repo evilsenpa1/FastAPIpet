@@ -1,0 +1,41 @@
+# Окружение Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Переменные окружения (никогда не копируем в образ)
+.env
+.env.*
+!.env.example
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Тесты и линтеры
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# Alembic (миграции применяем отдельной командой, не при сборке)
+# Раскомментируй если не хочешь включать миграции в образ:
+# alembic/versions/
+
+# IDE
+.idea/
+.vscode/
+
+# Прочее
+*.log
+*.sqlite3
