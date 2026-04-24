@@ -13,24 +13,24 @@ from dependencies.auth_dep import require_staff
 router = APIRouter()
 
 
-@router.get("/get_all_authors")
+@router.get("/")
 async def all_authors_route(service: AuthorService = Depends(get_author_service)):
     return await service.get_all_authors()
 
 
-@router.get("/author_by_id/{author_id}")
+@router.get("/{author_id}")
 async def author_by_id_route(
     author_id: int, service: AuthorService = Depends(get_author_service)
 ):
     author = await service.get_author_by_id(author_id)
     if not author:
-        return HTTPException(status_code=404, detail="Author not found")
+        raise HTTPException(status_code=404, detail="Author not found")
 
     return author
 
 
 @router.post(
-    "/add_author",
+    "/",
     dependencies=[Depends(security.access_token_required), Depends(require_staff)],
 )
 async def add_author_route(
@@ -40,7 +40,7 @@ async def add_author_route(
 
 
 @router.patch(
-    "/update_author/{author_id}",
+    "/{author_id}",
     dependencies=[Depends(security.access_token_required), Depends(require_staff)],
 )
 async def patch_author_route(
@@ -52,7 +52,7 @@ async def patch_author_route(
 
 
 @router.delete(
-    "/delete_author/{author_id}",
+    "/{author_id}",
     dependencies=[Depends(security.access_token_required), Depends(require_staff)],
 )
 async def delete_author_route(
