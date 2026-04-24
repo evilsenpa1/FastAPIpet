@@ -2,7 +2,7 @@
 from fastapi import HTTPException, status
 from models.auth_model import UserModel
 from repository.user_repo import UserRepository
-from schemas.user_schema import UserPatchSchema
+from schemas.user_schema import UserSelfPatchSchema
 
 
 class UserService:
@@ -15,10 +15,10 @@ class UserService:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
         return user
 
-    async def all_users(self) -> UserModel:
+    async def all_users(self) -> list[UserModel]:
         return await self.repo.get_all()
 
-    async def patch_user(self, schema: UserPatchSchema, user_id: int):
+    async def patch_user(self, schema: UserSelfPatchSchema, user_id: int):
         user = await self.repo.patch(user_id, schema)
         if not user:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
