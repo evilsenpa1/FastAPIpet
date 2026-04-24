@@ -8,7 +8,7 @@ class RegisterRequest(LoginRequest):
     username: str
 
 class UserResponse(BaseModel):
-    id: str
+    id: int
     email: str
     username: str
     role: str

@@ -34,7 +34,7 @@ class AuthorService:
 
         for book in orphaned_books:
             if book.file_path:
-                file_manager.delete_file(book.file_path)
+                await file_manager.delete_file(book.file_path)
             await book_repo.delete(book.id)
 
     

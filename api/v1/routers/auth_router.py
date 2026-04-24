@@ -50,6 +50,6 @@ async def refresh_route(
 
 @router.get("/staff_check")
 async def staff_check_route(id: int = Depends(get_current_user_id), service: AuthService = Depends(get_auth_service)):
-    return service.is_staff(id)
+    return await service.is_staff(id)
 
 
