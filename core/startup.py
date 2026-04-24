@@ -3,7 +3,9 @@ from db.base import get_session_ctx
 from repository.user_repo import UserRepository
 from models.auth_model import UserRole
 import bcrypt
+import logging
 
+logger = logging.getLogger(__name__)
 
 async def create_initial_superuser():
     if not settings.SUPERUSER_EMAIL:
@@ -28,4 +30,4 @@ async def create_initial_superuser():
                 "is_active": True,
             }
         )
-        print(f"✅ Superuser {settings.SUPERUSER_EMAIL} created.")
+        logger.info("✅ Superuser %s created.", settings.SUPERUSER_EMAIL)
