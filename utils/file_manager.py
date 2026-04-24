@@ -22,6 +22,7 @@ async def delete_file(path: str) -> None:
         logger.warning("Could not delete file %s: %s", path, e)
 
 
+
 async def create_file(path, file):
     async with aiofiles.open(path, "wb") as buffer:
         while chunk := await file.read(1024 * 1024):  # read 1MB in loop
