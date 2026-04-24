@@ -1,12 +1,14 @@
 import os
-from fastapi import HTTPException
 import aiofiles
+import asyncio
 
-def delete_file(path: str):
+
+async def delete_file(path: str):
     try:
-        os.remove(path)
+        await asyncio.to_thread(os.remove, path)
     except FileNotFoundError:
         pass
+
 
 async def create_file(path, file):
     async with aiofiles.open(path, "wb") as buffer:
