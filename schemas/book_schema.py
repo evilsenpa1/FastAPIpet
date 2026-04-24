@@ -1,22 +1,26 @@
-from pydantic import BaseModel, field_validator, Field, ConfigDict
+from datetime import date
+
+from pydantic import BaseModel, field_validator, ConfigDict
 from typing import List, Optional
 
-class BookAddSchema(BaseModel):
+class BookCreateRequest(BaseModel):
+    """Client-facing schema: what the API consumer sends when creating a book."""
     name: str
     authors_ids: List[int]
     description: str
-    year: int = Field()
-    month: int = Field()
-    day: int = Field()
-    file_path: str
-
+    pub_date: date
 
     @field_validator("name")
-    @classmethod 
+    @classmethod
     def not_empty(cls, v):
         if not v.strip():
             raise ValueError("Field cannot be empty")
-        return v.strip() 
+        return v.strip()
+
+
+class BookAddSchema(BookCreateRequest):
+    """Internal schema: BookCreateRequest + server-generated file_path."""
+    file_path: Optional[str] = None
 
 
 class BookSchema(BookAddSchema):
@@ -27,10 +31,7 @@ class BookPatchSchema(BaseModel):
     name: Optional[str] = None
     authors_ids: Optional[List[int]] = None
     description: Optional[str] = None
-    year: Optional[int] = None
-    month: Optional[int] = None
-    day: Optional[int] = None
-    file_path: Optional[str] = None
+    pub_date: Optional[date] = None
 
 
 
@@ -48,9 +49,7 @@ class BookResponseSchema(BaseModel):
     id: int
     name: str
     description: str
-    year: int
-    month: int
-    day: int
+    pub_date: date
     file_path: str
     authors: List[AuthorNestedSchema]  # ← ORM relationship, не authors_ids
 

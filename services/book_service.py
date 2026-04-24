@@ -1,20 +1,16 @@
-from schemas.book_schema import (
-    BookAddSchema,
-    BookDeleteSchema,
-    BookPatchSchema,
-)
-from db.session import SessionDep
-from models.book_model import BookModel, AuthorModel
-from repository.book_repo import BookRepository
-from repository.author_repo import AuthorRepository
-from dependencies.author_dep import get_author_repo
-from sqlalchemy import select
-from fastapi import HTTPException, File, UploadFile, Depends
-import aiofiles
-from pathlib import Path
 import uuid
+import logging
+from pathlib import Path
+
+from fastapi import HTTPException
+
+from schemas.book_schema import BookAddSchema, BookCreateRequest, BookPatchSchema
+from models.book_model import BookModel
+from repository.book_repo import BookRepository
+from dependencies.author_dep import get_author_repo
 from utils import file_manager
 
+logger = logging.getLogger(__name__)
 
 class BookService:
     def __init__(self, repo: BookRepository):
@@ -26,7 +22,7 @@ class BookService:
     async def get_book_by_id(self, id: int):
         return await self.repo.get_by_id(id)
 
-    async def create_book(self, user_id: int, file, data: BookAddSchema, author_repo):
+    async def create_book(self, user_id: int, file, data: BookCreateRequest, author_repo):
 
         await self._validate_authors(data.authors_ids)
 
@@ -34,24 +30,20 @@ class BookService:
 
         await file_manager.create_file(file_path, file)
 
-        file_path = str(file_path)
-
-        data.file_path = file_path
+        internal_data = BookAddSchema(**data.model_dump(), file_path=str(file_path))
 
         try:
-            authors_ids = data.authors_ids
-            book_data = data.model_dump(exclude={"authors_ids"})
+            authors_ids = internal_data.authors_ids
+            book_data = internal_data.model_dump(exclude={"authors_ids"})
             new_book = await self.repo.create(book_data, authors_ids, author_repo)
         except HTTPException:
-            file_manager.delete_file(file_path)
+            await file_manager.delete_file(file_path)
             raise
         except Exception as e:
-            file_manager.delete_file(file_path)
-            print(f"ERROR: {e}", flush=True)
-            import traceback
+            await file_manager.delete_file(file_path)
+            logger.error("ERROR: %s", e)
 
-            traceback.print_exc()
-            raise HTTPException(status_code=500, detail=f"Internal server error")
+            raise HTTPException(status_code=500, detail="Internal server error")
 
         return new_book
 
@@ -68,7 +60,7 @@ class BookService:
         
 
         if book.file_path:
-            file_manager.delete_file(book.file_path)
+            await file_manager.delete_file(book.file_path)
 
         return await self.repo.delete(id)
 
@@ -84,7 +76,7 @@ class BookService:
     async def _get_file_path(self, user_id: int, file: str) -> Path:
 
         if not file:
-            return {"message": "No upload file sent"}
+            raise HTTPException(status_code=400, detail="No file provided")
 
         UPLOAD_DIR = Path("uploads")
         UPLOAD_DIR.mkdir(exist_ok=True)
