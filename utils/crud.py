@@ -19,7 +19,6 @@ class CrudBase(Generic[ModelType]):
         return result.scalar_one_or_none()
 
     async def get_all(self, skip: int = 0, limit: int = 100):
-        query = select(self.model)
         result = await self.db.execute(select(self.model).offset(skip).limit(limit))
         return list(result.scalars().all())
 
