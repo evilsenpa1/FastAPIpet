@@ -96,43 +96,45 @@ PROD=false                  # set to true in production (enables Secure cookie f
 
 ### API Endpoints
 
-#### Auth — `/api/v1/auth`
+#### Auth — `/v1/auth`
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
 | `POST` | `/register` | — | Register new user |
 | `POST` | `/login` | — | Login, sets JWT cookies |
 | `POST` | `/refresh` | refresh token | Refresh access token |
+| `GET` | `/staff_check` | User | Check if current user has staff role |
 
-#### Books — `/api/v1/books`
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/get_all_books` | — | Get all books |
-| `GET` | `/book_by_id/{id}` | — | Get book by ID |
-| `POST` | `/upload_book` | Staff | Upload book with file (`.pdf`, `.doc`, `.docx`, `.txt`) |
-| `PATCH` | `/patch_book/{id}` | Staff | Update book |
-| `DELETE` | `/delete_books/{id}` | Staff | Delete book |
-
-#### Authors — `/api/v1/authors`
+#### Books — `/v1/book`
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| `GET` | `/get_all_authors` | — | Get all authors |
-| `GET` | `/author_by_id/{id}` | — | Get author by ID |
-| `POST` | `/add_author` | Staff | Add new author |
-| `PATCH` | `/update_author/{id}` | Staff | Update author |
-| `DELETE` | `/delete_author/{id}` | Staff | Delete author |
+| `GET` | `/` | — | Get all books |
+| `GET` | `/{book_id}` | — | Get book by ID |
+| `POST` | `/` | Staff | Upload book with file (`.pdf`, `.doc`, `.docx`, `.txt`) |
+| `PATCH` | `/{book_id}` | Staff | Update book |
+| `DELETE` | `/{book_id}` | Staff | Delete book |
 
-#### Users — `/api/v1/users`
+#### Authors — `/v1/author`
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| `GET` | `/all_users` | Staff | Get all users |
-| `GET` | `/user_by_id/{id}` | Staff | Get user by ID |
-| `PATCH` | `/patch_user/me` | User | Update own profile |
-| `PATCH` | `/patch_user/{id}` | Staff | Update any user |
-| `DELETE` | `/delete_user/{id}` | Staff | Delete user |
+| `GET` | `/` | — | Get all authors |
+| `GET` | `/{author_id}` | — | Get author by ID |
+| `POST` | `/` | Staff | Add new author |
+| `PATCH` | `/{author_id}` | Staff | Update author |
+| `DELETE` | `/{author_id}` | Staff | Delete author |
+
+#### Users — `/v1/user`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `GET` | `/` | Staff | Get all users |
+| `GET` | `/me` | User | Get own profile |
+| `GET` | `/{user_id}` | Staff | Get user by ID |
+| `PATCH` | `/me` | User | Update own profile |
+| `PATCH` | `/{user_id}` | Staff | Update any user |
+| `DELETE` | `/{user_id}` | Staff | Delete user |
 
 ### Roles
 
@@ -231,43 +233,45 @@ PROD=false                   # true у продакшні (вмикає прап
 
 ### API Ендпоінти
 
-#### Авторизація — `/api/v1/auth`
+#### Авторизація — `/v1/auth`
 
 | Метод | Ендпоінт | Доступ | Опис |
 |-------|----------|--------|------|
 | `POST` | `/register` | — | Реєстрація нового користувача |
 | `POST` | `/login` | — | Вхід, встановлює JWT cookies |
 | `POST` | `/refresh` | refresh token | Оновлення access токена |
+| `GET` | `/staff_check` | User | Перевірити чи поточний користувач є staff |
 
-#### Книги — `/api/v1/books`
-
-| Метод | Ендпоінт | Доступ | Опис |
-|-------|----------|--------|------|
-| `GET` | `/get_all_books` | — | Отримати всі книги |
-| `GET` | `/book_by_id/{id}` | — | Отримати книгу за ID |
-| `POST` | `/upload_book` | Staff | Завантажити книгу з файлом (`.pdf`, `.doc`, `.docx`, `.txt`) |
-| `PATCH` | `/patch_book/{id}` | Staff | Оновити книгу |
-| `DELETE` | `/delete_books/{id}` | Staff | Видалити книгу |
-
-#### Автори — `/api/v1/authors`
+#### Книги — `/v1/book`
 
 | Метод | Ендпоінт | Доступ | Опис |
 |-------|----------|--------|------|
-| `GET` | `/get_all_authors` | — | Отримати всіх авторів |
-| `GET` | `/author_by_id/{id}` | — | Отримати автора за ID |
-| `POST` | `/add_author` | Staff | Додати автора |
-| `PATCH` | `/update_author/{id}` | Staff | Оновити автора |
-| `DELETE` | `/delete_author/{id}` | Staff | Видалити автора |
+| `GET` | `/` | — | Отримати всі книги |
+| `GET` | `/{book_id}` | — | Отримати книгу за ID |
+| `POST` | `/` | Staff | Завантажити книгу з файлом (`.pdf`, `.doc`, `.docx`, `.txt`) |
+| `PATCH` | `/{book_id}` | Staff | Оновити книгу |
+| `DELETE` | `/{book_id}` | Staff | Видалити книгу |
 
-#### Користувачі — `/api/v1/users`
+#### Автори — `/v1/author`
 
 | Метод | Ендпоінт | Доступ | Опис |
 |-------|----------|--------|------|
-| `GET` | `/all_users` | Staff | Отримати всіх користувачів |
-| `GET` | `/user_by_id/{id}` | Staff | Отримати користувача за ID |
-| `PATCH` | `/patch_user/me` | User | Оновити власний профіль |
-| `PATCH` | `/patch_user/{id}` | Staff | Оновити будь-якого користувача |
-| `DELETE` | `/delete_user/{id}` | Staff | Видалити користувача |
+| `GET` | `/` | — | Отримати всіх авторів |
+| `GET` | `/{author_id}` | — | Отримати автора за ID |
+| `POST` | `/` | Staff | Додати автора |
+| `PATCH` | `/{author_id}` | Staff | Оновити автора |
+| `DELETE` | `/{author_id}` | Staff | Видалити автора |
+
+#### Користувачі — `/v1/user`
+
+| Метод | Ендпоінт | Доступ | Опис |
+|-------|----------|--------|------|
+| `GET` | `/` | Staff | Отримати всіх користувачів |
+| `GET` | `/me` | User | Отримати власний профіль |
+| `GET` | `/{user_id}` | Staff | Отримати користувача за ID |
+| `PATCH` | `/me` | User | Оновити власний профіль |
+| `PATCH` | `/{user_id}` | Staff | Оновити будь-якого користувача |
+| `DELETE` | `/{user_id}` | Staff | Видалити користувача |
 
 ### Ролі
 
