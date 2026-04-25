@@ -12,6 +12,7 @@ class UserResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+
 class UserSelfPatchSchema(BaseModel):
     """Fields a user is allowed to change about themselves."""
     username: Optional[str] = None

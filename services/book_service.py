@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 UPLOAD_DIR = Path("uploads")
 ALLOWED_EXTENSIONS = {".doc", ".docx", ".pdf", ".txt"}
 
-
 class BookService:
     def __init__(self, repo: BookRepository):
         self.repo = repo
