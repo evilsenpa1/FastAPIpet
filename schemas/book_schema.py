@@ -50,7 +50,7 @@ class BookResponseSchema(BaseModel):
     name: str
     description: str
     pub_date: date
-    file_path: str
+    file_path: Optional[str] = None
     authors: List[AuthorNestedSchema]  # ← ORM relationship, не authors_ids
 
     model_config = ConfigDict(from_attributes=True)
