@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, UploadFile, HTTPException
+from fastapi import APIRouter, Depends, File, UploadFile, HTTPException, status
 from services.book_service import BookService
 from dependencies.book_dep import get_book_service
 from schemas.book_schema import BookCreateRequest, BookPatchSchema, BookResponseSchema
@@ -60,6 +60,7 @@ async def delete_book_route(
     dependencies=[Depends(security.access_token_required), Depends(require_staff)],
     openapi_extra=UPLOAD_BOOK_OPENAPI,
     response_model=BookResponseSchema,
+    status_code=status.HTTP_201_CREATED,
 )
 async def upload_book_route(
     service: BookService = Depends(get_book_service),

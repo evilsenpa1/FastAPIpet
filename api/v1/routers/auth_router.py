@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, Depends, Request, HTTPException
+from fastapi import APIRouter, Response, Depends, status
 from schemas.auth_schema import RegisterRequest, LoginRequest, UserResponse
 from services.auth_service import AuthService
 from dependencies.auth_dep import get_auth_service, get_current_user_id
@@ -7,12 +7,7 @@ from core.auth_security import security
 router = APIRouter()
 
 
-# @router.get("/protected", dependencies=[Depends(security.access_token_required)])
-# def protected_route():
-#     return {"data": "Supersecret"}
-
-
-@router.post("/register")
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_route(
     data: RegisterRequest,
     service: AuthService = Depends(get_auth_service),

@@ -1,7 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from schemas.author_schema import AuthorAddSchema, AuthorSchema, AuthorPatchSchema
-from db.session import SessionDep
-from services import book_service
 from services.author_service import AuthorService
 from repository.author_repo import AuthorRepository
 from repository.book_repo import BookRepository
@@ -32,6 +30,7 @@ async def author_by_id_route(
 @router.post(
     "/",
     dependencies=[Depends(security.access_token_required), Depends(require_staff)],
+    status_code=status.HTTP_201_CREATED,
 )
 async def add_author_route(
     data: AuthorAddSchema, service: AuthorService = Depends(get_author_service)
