@@ -1,18 +1,33 @@
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from pydantic import computed_field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
-SUPERUSER_USERNAME = os.getenv("SUPERUSER_USERNAME")
-SUPERUSER_EMAIL = os.getenv("SUPERUSER_EMAIL")
-SUPERUSER_PASSWORD = os.getenv("SUPERUSER_PASSWORD")
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_HOST: str
+    DB_PORT: int = 5432
+    DB_NAME: str
+
+    SUPERUSER_USERNAME: str
+    SUPERUSER_EMAIL: str
+    SUPERUSER_PASSWORD: str
+
+    SECRET_KEY: str
+    PROD: bool = False
+
+    @computed_field
+    @property
+    def DATABASE_URL(self) -> str:
+        return (
+            f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        )
 
 
-DATABASE_URL = f'postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+settings = Settings()
+
+# For "from core.settings import DATABASE_URL" used in db/base.py
+DATABASE_URL = settings.DATABASE_URL
