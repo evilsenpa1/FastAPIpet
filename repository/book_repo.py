@@ -12,8 +12,9 @@ class BookRepository(CrudBase[BookModel]):
         super().__init__(model=BookModel, db=db)
 
     async def create(self, book_data: dict, authors: list[AuthorModel]) -> BookModel:
-        new_book = await super().create(book_data)
+        new_book = BookModel(**book_data)
         new_book.authors = authors
+        self.db.add(new_book)
         await self.db.commit()
         await self.db.refresh(new_book)
         return new_book

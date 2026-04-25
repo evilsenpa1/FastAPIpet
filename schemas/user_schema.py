@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional
+from models.auth_model import UserRole
 
 
 class UserResponseSchema(BaseModel):
@@ -21,5 +22,5 @@ class UserSelfPatchSchema(BaseModel):
 
 class UserPatchSchema(UserSelfPatchSchema):
     """Extended schema for staff: also allows changing role and active status."""
-    role: Optional[str] = None
+    role: Optional[UserRole] = None
     is_active: Optional[bool] = None
