@@ -57,7 +57,7 @@ Request → Router → Service → Repository → SQLAlchemy → PostgreSQL
 
 ```bash
 git clone https://github.com/evilsenpa1/FastAPIpet.git
-cd your-repo
+cd FastAPIpet
 cp .env.example .env   # fill in the values
 docker-compose up --build
 ```
@@ -193,8 +193,8 @@ alembic downgrade -1                           # roll back one step
 #### Через Docker (рекомендовано)
 
 ```bash
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
+git clone https://github.com/evilsenpa1/FastAPIpet.git
+cd FastAPIpet
 cp .env.example .env   # заповніть значення
 docker-compose up --build
 ```
