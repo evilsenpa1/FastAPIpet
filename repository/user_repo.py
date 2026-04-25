@@ -1,8 +1,6 @@
-from fastapi import HTTPException
 from sqlalchemy import select
 from db.session import SessionDep
 from models.auth_model import UserModel
-from schemas.user_schema import UserPatchSchema
 from utils.crud import CrudBase
 
 

@@ -1,5 +1,4 @@
 from authx.exceptions import MissingTokenError
-from db.base import Base, engine
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from api.v1.v1_router import v1_router
@@ -7,7 +6,6 @@ import uvicorn
 from contextlib import asynccontextmanager
 from core.startup import create_initial_superuser
 
-# app = FastAPI()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,15 +15,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(v1_router)
-
-
-@app.post("/setup_database")
-async def setup_database():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
-
-    return {"status": "success"}
 
 
 @app.exception_handler(MissingTokenError)

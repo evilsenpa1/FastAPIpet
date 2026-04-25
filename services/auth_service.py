@@ -1,11 +1,8 @@
 # auth/service.py
 import bcrypt
 from fastapi import HTTPException, status
-from models.auth_model import UserModel
-from repository.user_repo import UserRepository
-from core import auth_security
-from jose import JWTError, jwt
 from models.auth_model import UserModel, UserRole
+from repository.user_repo import UserRepository
 from schemas.auth_schema import RegisterRequest
 
 
@@ -53,8 +50,8 @@ class AuthService:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
         return user
 
-    async def all_users(self) -> UserModel:
-        query = await self.repo.get_all_users()
+    async def all_users(self) -> list[UserModel]:
+        query = await self.repo.get_all()
         return query
 
     async def is_staff(self, user_id: int) -> bool:

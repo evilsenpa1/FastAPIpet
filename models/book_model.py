@@ -1,14 +1,10 @@
+from datetime import date
+
 from db.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List
 from sqlalchemy import ForeignKey, Table, Column
 
-
-# class BookAuthor(Base):
-#     __tablename__ = "book_authors"
-
-#     book_id: Mapped[int] = mapped_column(ForeignKey("books.id"), primary_key=True)
-#     author_id: Mapped[int] = mapped_column(ForeignKey("authors.id"), primary_key=True)
 
 association_table = Table(
     "association_table",
@@ -25,9 +21,7 @@ class BookModel(Base):
     name: Mapped[str] = mapped_column()
     authors: Mapped[List["AuthorModel"]] = relationship(secondary=association_table, back_populates="books", lazy="selectin")
     description: Mapped[str] = mapped_column()
-    year: Mapped[int] = mapped_column()
-    month: Mapped[int] = mapped_column()
-    day: Mapped[int] = mapped_column()
+    pub_date: Mapped[date] = mapped_column()
     file_path: Mapped[str] = mapped_column(nullable=True)
 
 

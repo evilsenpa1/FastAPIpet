@@ -1,11 +1,6 @@
-from sqlalchemy import select
 from db.session import SessionDep
-from models.book_model import BookModel, AuthorModel
-from schemas.book_schema import BookAddSchema, BookPatchSchema
-from fastapi import HTTPException, Depends
-from db.session import get_session, SessionDep
+from models.book_model import BookModel
 from utils.crud import CrudBase
-from repository.author_repo import AuthorRepository
 
 
 class BookRepository(CrudBase[BookModel]):
