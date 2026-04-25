@@ -22,4 +22,3 @@ class UserPatchSchema(UserSelfPatchSchema):
     """Extended schema for staff: also allows changing role and active status."""
     role: Optional[str] = None
     is_active: Optional[bool] = None
-

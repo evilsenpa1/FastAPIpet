@@ -99,5 +99,3 @@ class BookService:
         user_dir.mkdir(parents=True, exist_ok=True)
 
         return user_dir / f"{uuid.uuid4()}{file_ext}"
-
-
