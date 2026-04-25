@@ -10,7 +10,7 @@ ModelType = TypeVar("ModelType", bound=DeclarativeBase)
 
 
 class CrudBase(Generic[ModelType]):
-    def __init__(self, model: Type[ModelType], db: SessionDep = None):
+    def __init__(self, model: Type[ModelType], db: SessionDep):
         self.model = model
         self.db = db
 
